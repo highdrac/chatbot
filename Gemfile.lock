@@ -21,6 +21,7 @@ GEM
       concurrent-ruby (~> 1.0)
     minitest (5.11.3)
     multipart-post (2.0.0)
+    parallel (1.12.1)
     redis (4.0.1)
     slack-ruby-client (0.11.1)
       activesupport
@@ -42,6 +43,7 @@ PLATFORMS
 DEPENDENCIES
   eventmachine
   faye-websocket
+  parallel
   redis
   slack-ruby-client
 

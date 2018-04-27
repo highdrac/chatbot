@@ -1,0 +1,12 @@
+slack:
+    - team: TEAM1
+      api_token: TOKEN1
+      response_type: default
+    - team: TEAM2
+      api_token: TOKEN2
+      response_type: default
+discord:
+    - team: TEAM3
+      api_token: TOKEN3
+      response_type: default
+
