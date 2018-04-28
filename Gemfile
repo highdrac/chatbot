@@ -9,6 +9,9 @@ gem 'eventmachine'
 gem 'faye-websocket'
 gem 'redis'
 gem 'parallel'
+gem 'discordrb'
+
 gem 'rspec'
+
 gem 'google-api-client'
 

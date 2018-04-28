@@ -1,5 +1,6 @@
 require 'yaml'
 require 'google/apis/customsearch_v1'
+require 'erb'
 
 class GoogleCustomSearch
 
@@ -10,7 +11,7 @@ class GoogleCustomSearch
 
     @keyword = keyword
     @site = site
-    @search_type = (search_type == "image") ? "image" : ""
+    @search_type = (search_type == "image") ? "image" : nil
     @api_key = config["api_key"]
     @search_engine_id = config["search_engine_id"]
     @template = config["template"][search_type][response_type]

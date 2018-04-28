@@ -12,6 +12,17 @@ GEM
     declarative (0.0.10)
     declarative-option (0.1.0)
     diff-lcs (1.3)
+    discordrb (3.2.1)
+      discordrb-webhooks (~> 3.2.0.1)
+      opus-ruby
+      rbnacl (~> 3.4.0)
+      rest-client
+      websocket-client-simple (>= 0.3.0)
+    discordrb-webhooks (3.2.0.1)
+      rest-client
+    domain_name (0.5.20180417)
+      unf (>= 0.0.5, < 1.0.0)
+    event_emitter (0.2.6)
     eventmachine (1.2.5)
     faraday (0.15.0)
       multipart-post (>= 1.2, < 3)
@@ -20,6 +31,7 @@ GEM
     faye-websocket (0.10.7)
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.5.1)
+    ffi (1.9.23)
     gli (2.17.1)
     google-api-client (0.20.1)
       addressable (~> 2.5, >= 2.5.1)
@@ -37,6 +49,8 @@ GEM
       os (~> 0.9)
       signet (~> 0.7)
     hashie (3.5.7)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     httpclient (2.8.3)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
@@ -52,14 +66,23 @@ GEM
     minitest (5.11.3)
     multi_json (1.13.1)
     multipart-post (2.0.0)
+    netrc (0.11.0)
+    opus-ruby (1.0.1)
+      ffi
     os (0.9.6)
     parallel (1.12.1)
     public_suffix (3.0.2)
+    rbnacl (3.4.0)
+      ffi
     redis (4.0.1)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
       uber (< 0.2.0)
+    rest-client (2.0.2)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     retriable (3.1.1)
     rspec (3.7.0)
       rspec-core (~> 3.7.0)
@@ -90,6 +113,13 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uber (0.1.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.5)
+    websocket (1.2.5)
+    websocket-client-simple (0.3.0)
+      event_emitter
+      websocket
     websocket-driver (0.7.0)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
@@ -98,6 +128,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  discordrb
   eventmachine
   faye-websocket
   google-api-client
