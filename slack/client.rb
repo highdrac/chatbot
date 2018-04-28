@@ -4,27 +4,18 @@ require 'parallel'
 
 require File.expand_path(File.dirname(__FILE__)) + "/../lib/message_processer.rb"
 
-config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
-
 PLATFORM = "slack"
 
 class SlackClient
 
   def initialize(conf)
-    @config = conf
     @processer = MessageProcesser.new(PLATFORM, conf["team"], conf["response_type"])
-    self.start
-  end
-
-  def start
-    Parallel.each(@config[PLATFORM], in_process: @config[PLATFORM].length) do |conf|
-      Slack.configure do |c|
-        c.token = conf["api_token"]
-      end
-      client = Slack::RealTime::Client.new
-      client = self.configure_client(client)
-      client.start!
+    Slack.configure do |c|
+      c.token = conf["api_token"]
     end
+    client = Slack::RealTime::Client.new
+    client = self.configure_client(client)
+    client.start!
   end
 
   def configure_client(client)
@@ -48,5 +39,10 @@ class SlackClient
 
 end
 
-SlackClient.new(config)
+config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
+config = config[PLATFORM]
+
+Parallel.each(config, in_process: config.length) do |conf|
+  SlackClient.new(conf)
+end
 

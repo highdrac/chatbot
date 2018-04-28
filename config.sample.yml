@@ -9,4 +9,13 @@ discord:
     - team: TEAM3
       api_token: TOKEN3
       response_type: default
+lib:
+    google_custom_search:
+        api_key: API_KEY
+        search_engine_id: SEARCH_ENGINE_ID
+        template:
+            text:
+                default: "<%= data.title %>: <%= data.link %>"
+            image:
+                default: "<%= data.link %>"
 

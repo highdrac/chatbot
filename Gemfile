@@ -10,4 +10,5 @@ gem 'faye-websocket'
 gem 'redis'
 gem 'parallel'
 gem 'rspec'
+gem 'google-api-client'
 
