@@ -4,12 +4,11 @@ require 'erb'
 
 class GoogleCustomSearch
 
-  def initialize(keyword:, site: "", response_type: "default", search_type: nil)
+  def initialize(site: "", response_type: "default", search_type: nil)
 
     config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
     config = config["lib"]["google_custom_search"]
 
-    @keyword = keyword
     @site = site
     @search_type = "image" unless search_type.nil?
     @api_key = config["api_key"]
@@ -21,9 +20,9 @@ class GoogleCustomSearch
 
   end
 
-  def search(random = false)
+  def search(keyword, site: @site, search_type: @search_type, random: false)
 
-    list = @customsearch.list_cses(@keyword, cx: @search_engine_id, site_search: @site, search_type: @search_type)
+    list = @customsearch.list_cses(keyword, cx: @search_engine_id, site_search: site, search_type: search_type)
     index = random ? rand(10) : 0
     data = list.items[index]
     return ERB.new(@template).result(binding)
