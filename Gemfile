@@ -14,4 +14,5 @@ gem 'discordrb'
 gem 'rspec'
 
 gem 'google-api-client'
+gem 'nokogiri'
 
