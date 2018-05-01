@@ -8,10 +8,10 @@ PLATFORM = "slack"
 
 class SlackClient
 
-  def initialize(conf)
-    @processer = MessageProcesser.new(PLATFORM, conf["team"], conf["response_type"])
+  def initialize(config)
+    @processer = MessageProcesser.new(PLATFORM, config["team"], config["response_type"])
     Slack.configure do |c|
-      c.token = conf["api_token"]
+      c.token = config["api_token"]
     end
     client = Slack::RealTime::Client.new
     client = self.configure_client(client)
@@ -40,7 +40,7 @@ end
 config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
 config = config[PLATFORM]
 
-Parallel.each(config, in_process: config.length) do |conf|
-  SlackClient.new(conf)
+Parallel.each(config, in_process: config.length) do |config|
+  SlackClient.new(config)
 end
 
