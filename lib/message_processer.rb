@@ -9,68 +9,48 @@ class MessageProcesser
     @platform = platform
     @team = team
     @response_type = response_type
+    @gcs = GoogleCustomSearch.new({ response_type: @response_type })
   end
 
   def get_response(text)
     response = ""
-    params = { keyword: keyword, response_type: @response_type }
 
     case text
     # Google Search
     when /^g(?:oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "" }
-      random = (r == "r")
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search(random)
+      return @gcs.search(keyword, random: true)
 
     # Google Search (image)
     when /^i(?:mage)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "", search_type: "image" }
-      random = (r == "r")
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search(random)
+      return @gcs.search(keyword, search_type: "image", random: true)
 
     # Google Search (Wikipedia)
     when /^wiki(?:pedia)?[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "ja.wikipedia.org" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "ja.wikipedia.org")
 
     # Google Search (uncyclopedia)
     when /^uncy(?:clopedia)?[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "ansaikuropedia.org" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "ansaikuropedia.org")
 
     # Google Search (youtube)
     when /^(?:you)?tube[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "youtube.com" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "youtube.com")
 
     # Google Search (niconico)
     when /^nico(?:nico)?[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "www.nicovideo.jp" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "www.nicovideo.jp")
 
     # Google Search (nicodic)
     when /^n(?:ico)?dic[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "dic.nicovideo.jp" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "dic.nicovideo.jp")
 
     # Google Search (pixivdic)
     when /^p(?:ixiv)?dic[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "dic.pixiv.net" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "dic.pixiv.net")
 
     # Google Search (mhw)
     when /^mhw[\s　]+?(?<keyword>.+)$/ 
-      params.merge{ site: "mhwg.org" }
-      gcs = GoogleCustomSearch.new(params)
-      return gcs.search
+      return @gcs.search(keyword, site: "mhwg.org")
 
     # tenki.jp
     when /^(tenki|weather|天気)[\s　]+?(?<area>.+)$/ 
