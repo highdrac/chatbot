@@ -52,10 +52,7 @@ class TenkiJp
 
       doc = Nokogiri::HTML(open(detail_uri))
       title = doc.xpath(DETAIL_TITLE_XPATH).first.text
-      area_name = ""
-      if /^(.+)の天気/ =~ title
-        area_name = $1
-      end
+      area_name ||= area_name = $1 if title.match(/^(.+)の天気/)
       days = [
         { label: "今日", xpath: DETAIL_TODAY_XPATH },
         { label: "明日", xpath: DETAIL_TOMORROW_XPATH }
@@ -74,7 +71,7 @@ class TenkiJp
         doc.xpath(day[:xpath] + DETAIL_RAIN_PROBABILITY_XPATH).each do |node|
           rain_probability.push(node.text)
         end
-        response += ERB.new(RESPONSE_TEMPLATE).result(binding)
+        response << ERB.new(RESPONSE_TEMPLATE).result(binding)
       end
 
     rescue => e

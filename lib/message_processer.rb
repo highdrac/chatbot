@@ -13,67 +13,68 @@ class MessageProcesser
 
   def get_response(text)
     response = ""
+    params = { keyword: keyword, response_type: @response_type }
 
+    case text
     # Google Search
-    if /^g(?:oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "", response_type: @response_type }
+    when /^g(?:oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "" }
       random = (r == "r")
       gcs = GoogleCustomSearch.new(params)
       return gcs.search(random)
 
     # Google Search (image)
-    elsif /^i(?:mage)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "", response_type: @response_type, search_type: "image" }
+    when /^i(?:mage)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "", search_type: "image" }
       random = (r == "r")
       gcs = GoogleCustomSearch.new(params)
       return gcs.search(random)
 
     # Google Search (Wikipedia)
-    elsif /^wiki(?:pedia)?[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "ja.wikipedia.org", response_type: @response_type }
+    when /^wiki(?:pedia)?[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "ja.wikipedia.org" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # Google Search (uncyclopedia)
-    elsif /^uncy(?:clopedia)?[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "ansaikuropedia.org", response_type: @response_type }
+    when /^uncy(?:clopedia)?[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "ansaikuropedia.org" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # Google Search (youtube)
-    elsif /^(?:you)?tube[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "youtube.com", response_type: @response_type }
+    when /^(?:you)?tube[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "youtube.com" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # Google Search (niconico)
-    elsif /^nico(?:nico)?[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "www.nicovideo.jp", response_type: @response_type }
+    when /^nico(?:nico)?[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "www.nicovideo.jp" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # Google Search (nicodic)
-    elsif /^n(?:ico)?dic[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "dic.nicovideo.jp", response_type: @response_type }
+    when /^n(?:ico)?dic[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "dic.nicovideo.jp" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # Google Search (pixivdic)
-    elsif /^p(?:ixiv)?dic[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "dic.pixiv.net", response_type: @response_type }
+    when /^p(?:ixiv)?dic[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "dic.pixiv.net" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # Google Search (mhw)
-    elsif /^mhw[\s　]+?(?<keyword>.+)$/ =~ text
-      params = { keyword: keyword, site: "mhwg.org", response_type: @response_type }
+    when /^mhw[\s　]+?(?<keyword>.+)$/ 
+      params.merge{ site: "mhwg.org" }
       gcs = GoogleCustomSearch.new(params)
       return gcs.search
 
     # tenki.jp
-    elsif /^(tenki|weather|天気)[\s　]+?(?<area>.+)$/ =~ text
-      params = { area: area }
-      tj = TenkiJp.new(params)
+    when /^(tenki|weather|天気)[\s　]+?(?<area>.+)$/ 
+      tj = TenkiJp.new({ area: area })
       return tj.search
 
     end

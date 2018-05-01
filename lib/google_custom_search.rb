@@ -4,14 +4,14 @@ require 'erb'
 
 class GoogleCustomSearch
 
-  def initialize(keyword:, site: "", response_type: "default", search_type: "text")
+  def initialize(keyword:, site: "", response_type: "default", search_type: nil)
 
     config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
     config = config["lib"]["google_custom_search"]
 
     @keyword = keyword
     @site = site
-    @search_type = (search_type == "image") ? "image" : nil
+    @search_type = "image" unless search_type.nil?
     @api_key = config["api_key"]
     @search_engine_id = config["search_engine_id"]
     @template = config["template"][search_type][response_type]
