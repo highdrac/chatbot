@@ -18,9 +18,7 @@ class DiscordClient
   def configure_client(client)
     client.message do |event|
       response = @processer.get_response(event.message.content)
-      if response != ""
-        event.respond response
-      end
+      event.respond response unless resnpose.empty?
     end
     return client
   end

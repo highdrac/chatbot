@@ -4,29 +4,33 @@ require 'erb'
 
 class GoogleCustomSearch
 
-  def initialize(keyword:, site: "", response_type: "default", search_type: "text")
+  def initialize(site: "", response_type: "default")
 
     config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
     config = config["lib"]["google_custom_search"]
 
-    @keyword = keyword
-    @site = site
-    @search_type = (search_type == "image") ? "image" : nil
     @api_key = config["api_key"]
     @search_engine_id = config["search_engine_id"]
-    @template = config["template"][search_type][response_type]
+    @site = ""
+    @search_type = "text"
+    @response_type = response_type
+    @templates = config["template"][@response_type]
 
     @customsearch = Google::Apis::CustomsearchV1::CustomsearchService.new
     @customsearch.key = @api_key
 
   end
 
-  def search(random = false)
+  def search(keyword, site: @site, search_type: @search_type, random: false)
 
-    list = @customsearch.list_cses(@keyword, cx: @search_engine_id, site_search: @site, search_type: @search_type)
+    # パラメータにはtextが渡せないので渡すときだけ削除
+    st = (search_type == "text") ? nil : search_type
+    list = @customsearch.list_cses(keyword, cx: @search_engine_id, site_search: site, search_type: st)
     index = random ? rand(10) : 0
     data = list.items[index]
-    return ERB.new(@template).result(binding)
+    template = @templates[search_type]
+
+    return ERB.new(template).result(binding)
 
   end
 
