@@ -15,45 +15,44 @@ class MessageProcesser
   def get_response(text)
     response = ""
 
-    case text
     # Google Search
-    when /^g(?:oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ 
-      return @gcs.search(keyword, random: true)
+    if /^g(?:oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text
+      return @gcs.search(keyword, random: !r.nil?)
 
     # Google Search (image)
-    when /^i(?:mage)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ 
-      return @gcs.search(keyword, search_type: "image", random: true)
+    elsif /^i(?:mage)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text
+      return @gcs.search(keyword, search_type: "image", random: !r.nil?)
 
     # Google Search (Wikipedia)
-    when /^wiki(?:pedia)?[\s　]+?(?<keyword>.+)$/ 
+    elsif /^wiki(?:pedia)?[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "ja.wikipedia.org")
 
     # Google Search (uncyclopedia)
-    when /^uncy(?:clopedia)?[\s　]+?(?<keyword>.+)$/ 
+    elsif /^uncy(?:clopedia)?[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "ansaikuropedia.org")
 
     # Google Search (youtube)
-    when /^(?:you)?tube[\s　]+?(?<keyword>.+)$/ 
+    elsif /^(?:you)?tube[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "youtube.com")
 
     # Google Search (niconico)
-    when /^nico(?:nico)?[\s　]+?(?<keyword>.+)$/ 
+    elsif /^nico(?:nico)?[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "www.nicovideo.jp")
 
     # Google Search (nicodic)
-    when /^n(?:ico)?dic[\s　]+?(?<keyword>.+)$/ 
+    elsif /^n(?:ico)?dic[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "dic.nicovideo.jp")
 
     # Google Search (pixivdic)
-    when /^p(?:ixiv)?dic[\s　]+?(?<keyword>.+)$/ 
+    elsif /^p(?:ixiv)?dic[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "dic.pixiv.net")
 
     # Google Search (mhw)
-    when /^mhw[\s　]+?(?<keyword>.+)$/ 
+    elsif /^mhw[\s　]+?(?<keyword>.+)$/ =~ text
       return @gcs.search(keyword, site: "mhwg.org")
 
     # tenki.jp
-    when /^(tenki|weather|天気)[\s　]+?(?<area>.+)$/ 
+    elsif /^(tenki|weather|天気)[\s　]+?(?<area>.+)$/ =~ text
       tj = TenkiJp.new({ area: area })
       return tj.search
 
