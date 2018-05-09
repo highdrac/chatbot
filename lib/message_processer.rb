@@ -1,3 +1,4 @@
+require File.expand_path(File.dirname(__FILE__)) + "/response.rb"
 require File.expand_path(File.dirname(__FILE__)) + "/google_custom_search.rb"
 require File.expand_path(File.dirname(__FILE__)) + "/tenki_jp.rb"
 
@@ -10,10 +11,13 @@ class MessageProcesser
     @team = team
     @response_type = response_type
     @gcs = GoogleCustomSearch.new({ response_type: @response_type })
+    @tj = TenkiJp.new({ response_type: @response_type })
   end
 
   def get_response(text)
-    response = ""
+
+    # Reminder
+    text.gsub!(/^Reminder: (.+)\.$/, "\1")
 
     # Google Search
     if /^g(?:oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text
@@ -53,11 +57,12 @@ class MessageProcesser
 
     # tenki.jp
     elsif /^(tenki|weather|天気)[\s　]+?(?<area>.+)$/ =~ text
-      tj = TenkiJp.new({ area: area })
-      return tj.search
+      return @tj.search(area: area)
 
     end
-  
+
+    return Response.new
+
   end
 
 end

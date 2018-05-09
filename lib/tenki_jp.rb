@@ -2,10 +2,11 @@ require 'nokogiri'
 require 'uri'
 require 'open-uri'
 require 'erb'
+require 'yaml'
 
 SITE = "https://tenki.jp"
 SEARCH_URI = SITE + "/search"
-SEARCH_XPATH = '//p[@class="search-entry-data"][1]/a'
+SEARCH_DETAIL_URL_XPATH = '//p[@class="search-entry-data"][1]/a'
 DETAIL_TITLE_XPATH = '//h2'
 DETAIL_TODAY_XPATH = '//section[@class="today-weather"]'
 DETAIL_TOMORROW_XPATH = '//section[@class="tomorrow-weather"]'
@@ -22,29 +23,39 @@ RESPONSE_TEMPLATE = <<'EOS'
 <%= rain_probability.join('/') %>
 EOS
 
+RAIN_PROBABILITY_TERMS = 5
+RAIN_PROBABILITY_THRESHOLD = 20
+
 class TenkiJp
 
-  def initialize(area: "東京都")
+  def initialize(response_type: "default")
 
-    @area = area
+    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
+    config = config["lib"]["tenki_jp"]
+
+    @response_type = response_type
+    @templates = config["templates"][@response_type]
 
   end
 
-  def search
+  def search(area: "東京都")
 
     # エリアのURI特定のため、検索してエリアのURIを取得する
-    search_uri = URI.escape(SEARCH_URI + "/?keyword=" + @area)
+    search_uri = URI.escape(SEARCH_URI + "/?keyword=" + area)
     detail_uri = ""
+    response = Response.new
 
     begin
 
       doc = Nokogiri::HTML(open(search_uri))
-      nodes = doc.xpath(SEARCH_XPATH)
+      nodes = doc.xpath(SEARCH_DETAIL_URL_XPATH)
       detail_uri = URI.escape(SITE + nodes.first["href"])
 
     rescue => e
 
-      return "エラー：エリアが見つかりませんでした。"
+      p e
+      response.text = "エラー：エリアが見つかりませんでした。"
+      return response
 
     end
 
@@ -58,7 +69,8 @@ class TenkiJp
         { label: "明日", xpath: DETAIL_TOMORROW_XPATH }
       ]
 
-      response = ""
+      text = ""
+      rains = false
       days.each do |day|
 
         date = day[:label]
@@ -71,16 +83,37 @@ class TenkiJp
         doc.xpath(day[:xpath] + DETAIL_RAIN_PROBABILITY_XPATH).each do |node|
           rain_probability.push(node.text)
         end
-        response << ERB.new(RESPONSE_TEMPLATE).result(binding)
+        rains = rains?(rain_probability)
+        text << ERB.new(RESPONSE_TEMPLATE).result(binding)
       end
+      if rains
+        text = (@templates["rains"] << "\n") + text
+        response.notice = true
+      end
+      response.text = text
 
     rescue => e
 
-      return "エラー：指定エリア情報の取得に失敗しました。"
+      p e
+      response.text = "エラー：指定エリア情報の取得に失敗しました。"
+      return response
 
     end
 
     return response
+
+  end
+
+  def rains?(probability)
+
+    # 24-30h分を通知対象にカウントする
+    cnt = 0
+    probability.each do |prob|
+      next if /^(\d+)/ !~ prob || cnt >= RAIN_PROBABILITY_TERMS
+      cnt += 1
+      return true if prob.to_i >= RAIN_PROBABILITY_THRESHOLD
+    end
+    return false
 
   end
 

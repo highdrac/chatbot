@@ -24,7 +24,11 @@ class SlackClient
     end
     client.on :message do |data|
       response = @processer.get_response(data.text)
-      client.message channel: data.channel, text: response unless response.empty?
+      if response.notice
+        username = (data.user == "USLACKBOT") ? "<@channel>" : "<@#{data.user}>"
+        response.text = (username << " " << response.text)
+      end
+      client.message channel: data.channel, text: response.text unless response.text.empty?
     end
     client.on :close do |_data|
       puts "Client is about to disconnect"

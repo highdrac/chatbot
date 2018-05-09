@@ -13,8 +13,11 @@ lib:
     google_custom_search:
         api_key: API_KEY
         search_engine_id: SEARCH_ENGINE_ID
-        template:
+        templates:
             default:
                 text: "<%= data.title %>: <%= data.link %>"
                 image: "<%= data.link %>"
-
+    tenki_jp:
+        templates:
+            default:
+                rains: "傘持ってけー"

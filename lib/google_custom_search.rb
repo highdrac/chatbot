@@ -14,7 +14,7 @@ class GoogleCustomSearch
     @site = ""
     @search_type = "text"
     @response_type = response_type
-    @templates = config["template"][@response_type]
+    @templates = config["templates"][@response_type]
 
     @customsearch = Google::Apis::CustomsearchV1::CustomsearchService.new
     @customsearch.key = @api_key
@@ -30,7 +30,7 @@ class GoogleCustomSearch
     data = list.items[index]
     template = @templates[search_type]
 
-    return ERB.new(template).result(binding)
+    return Response.new(text: ERB.new(template).result(binding))
 
   end
 
