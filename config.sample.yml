@@ -20,4 +20,11 @@ lib:
     tenki_jp:
         templates:
             default:
+                response: "<%= date %>の<%= area_name %>の天気：<%= weather %>\n<%= hightemp %><%= hightempdiff %>/<%= lowtemp %><%= lowtempdiff %>\n<%= rain_probability.join('/') %>"
                 rains: "傘持ってけー"
+    navitime:
+        templates:
+            default:
+                title: "<%= dep %>⇒<%= arr %> <%= search_time %>"
+                summary: "<%= number %> <%= time %> <%= transfer %> <%= fee %>"
+                detail: "<%= number %> <%= time %> <%= transfer %> <%= fee %>\n<%= detail %>"
