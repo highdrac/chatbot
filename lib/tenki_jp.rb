@@ -4,29 +4,24 @@ require 'open-uri'
 require 'erb'
 require 'yaml'
 
-SITE = "https://tenki.jp"
-SEARCH_URI = SITE + "/search"
-SEARCH_DETAIL_URL_XPATH = '//p[@class="search-entry-data"][1]/a'
-DETAIL_TITLE_XPATH = '//h2'
-DETAIL_TODAY_XPATH = '//section[@class="today-weather"]'
-DETAIL_TOMORROW_XPATH = '//section[@class="tomorrow-weather"]'
-DETAIL_WEATHER_XPATH = '//p[@class="weather-telop"]'
-DETAIL_HIGHTEMP_XPATH = '//dd[@class="high-temp temp"]'
-DETAIL_HIGHTEMPDIFF_XPATH = '//dd[@class="high-temp tempdiff"]'
-DETAIL_LOWTEMP_XPATH = '//dd[@class="low-temp temp"]'
-DETAIL_LOWTEMPDIFF_XPATH = '//dd[@class="low-temp tempdiff"]'
-DETAIL_RAIN_PROBABILITY_XPATH = '//tr[@class="rain-probability"]/td'
-
-RESPONSE_TEMPLATE = <<'EOS'
-<%= date %>の<%= area_name %>の天気：<%= weather %>
-<%= hightemp %><%= hightempdiff %>/<%= lowtemp %><%= lowtempdiff %>
-<%= rain_probability.join('/') %>
-EOS
-
-RAIN_PROBABILITY_TERMS = 5
-RAIN_PROBABILITY_THRESHOLD = 20
 
 class TenkiJp
+
+  SITE = "https://tenki.jp"
+  SEARCH_URI = SITE + "/search"
+  SEARCH_DETAIL_URL_XPATH = '//p[@class="search-entry-data"][1]/a'
+  DETAIL_TITLE_XPATH = '//h2'
+  DETAIL_TODAY_XPATH = '//section[@class="today-weather"]'
+  DETAIL_TOMORROW_XPATH = '//section[@class="tomorrow-weather"]'
+  DETAIL_WEATHER_XPATH = '//p[@class="weather-telop"]'
+  DETAIL_HIGHTEMP_XPATH = '//dd[@class="high-temp temp"]'
+  DETAIL_HIGHTEMPDIFF_XPATH = '//dd[@class="high-temp tempdiff"]'
+  DETAIL_LOWTEMP_XPATH = '//dd[@class="low-temp temp"]'
+  DETAIL_LOWTEMPDIFF_XPATH = '//dd[@class="low-temp tempdiff"]'
+  DETAIL_RAIN_PROBABILITY_XPATH = '//tr[@class="rain-probability"]/td'
+
+  RAIN_PROBABILITY_TERMS = 5
+  RAIN_PROBABILITY_THRESHOLD = 30
 
   def initialize(response_type: "default")
 
@@ -84,7 +79,7 @@ class TenkiJp
           rain_probability.push(node.text)
         end
         rains = rains?(rain_probability)
-        text << ERB.new(RESPONSE_TEMPLATE).result(binding)
+        text << ERB.new(@templates["response"]).result(binding)
       end
       if rains
         text = (@templates["rains"] << "\n") + text

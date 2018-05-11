@@ -23,8 +23,8 @@ GEM
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     event_emitter (0.2.6)
-    eventmachine (1.2.5)
-    faraday (0.15.0)
+    eventmachine (1.2.6)
+    faraday (0.15.1)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
@@ -131,6 +131,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   discordrb
   eventmachine
   faye-websocket

@@ -25,7 +25,7 @@ class SlackClient
     client.on :message do |data|
       response = @processer.get_response(data.text)
       if response.notice
-        username = (data.user == "USLACKBOT") ? "<@channel>" : "<@#{data.user}>"
+        username = (data.user == "USLACKBOT") ? "<!channel>" : "<@#{data.user}>"
         response.text = (username << " " << response.text)
       end
       client.message channel: data.channel, text: response.text unless response.text.empty?
