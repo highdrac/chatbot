@@ -79,7 +79,7 @@ class TenkiJp
           rain_probability.push(node.text)
         end
         rains = rains?(rain_probability)
-        text << ERB.new(@templates["response"]).result(binding)
+        text << ERB.new(@templates["response"]).result(binding) << "\n"
       end
       if rains
         text = (@templates["rains"] << "\n") + text

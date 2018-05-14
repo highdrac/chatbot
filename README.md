@@ -3,7 +3,7 @@
 個人的に使用しているchatbot。  
 SlackとDiscordに対応。  
 
-## 動作環境↲
+## 動作環境
 
 Ruby 2.5  
   
@@ -30,7 +30,7 @@ wiki(pedia) KEYWORD: Google検索(対象サイト: ja.wikipedia.org)
 uncy(clopedia) KEYWORD: Google検索(対象サイト: ansaikuropedia.org)  
 (you)tube KEYWORD: Google検索(対象サイト: youtube.com)  
 nico(nico) KEYWORD: Google検索(対象サイト: www.nicovideo.jp)  
-n(ico)dic KEYWORD: Google検索(対象サイト: dic.pixiv.net)  
+n(ico)dic KEYWORD: Google検索(対象サイト: dic.nicovideo.jp)  
 p(ixiv)dic KEYWORD: Google検索(対象サイト: dic.pixiv.net)  
 mhw KEYWORD: Google検索(対象サイト: mhwg.org)  
 
@@ -46,7 +46,7 @@ mhw KEYWORD: Google検索(対象サイト: mhwg.org)
 日付/時間のデフォルトは現在日時。  
 種別のデフォルトは発。  
 
-## ToDo↲
+## ToDo
 
 ダイス機能  
 辞書機能  
