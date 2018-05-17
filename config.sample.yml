@@ -1,30 +1,29 @@
 slack:
-    - team: TEAM1
-      api_token: TOKEN1
-      response_type: default
-    - team: TEAM2
-      api_token: TOKEN2
-      response_type: default
+    TEAM_NAME1:
+        api_token: TOKEN1
+        response_type: default
+        wiki_uri: URI1
+    TEAM_NAME2:
+        api_token: TOKEN2
+        response_type: default
 discord:
-    - team: TEAM3
-      api_token: TOKEN3
-      response_type: default
+    client_id: CLIENT_ID
+    token: TOKEN
+    servers:
+        CHANNEL_ID1: # https://discordapp.com/channels/XXX/YYY の YYY 部分
+            response_type: default
+            wiki_uri: URI1
+        CHANNEL_ID2:
+            response_type: default
 lib:
     google_custom_search:
         api_key: API_KEY
         search_engine_id: SEARCH_ENGINE_ID
         templates:
-            default:
-                text: "<%= data.title %>: <%= data.link %>"
-                image: "<%= data.link %>"
+            default: "<% if data[:search_type] == 'text' %><%= data[:title] %>: <% end %><%= data[:link] %>"
     tenki_jp:
         templates:
-            default:
-                response: "<%= date %>の<%= area_name %>の天気：<%= weather %>\n<%= hightemp %><%= hightempdiff %>/<%= lowtemp %><%= lowtempdiff %>\n<%= rain_probability.join('/') %>"
-                rains: "傘持ってけー"
+            default: "<% data[:weather].each do |w| %><%= w[:date] %>の<%= data[:area_name] %>の天気：<%= w[:weather] %>\n<%= w[:hightemp] %><%= w[:hightempdiff] %>/<%= w[:lowtemp] %><%= w[:lowtempdiff] %>\n<%= w[:rain_probability].join('/') %>\n<% end %><% if data[:rains] %>傘持ってけー<% end %>"
     navitime:
         templates:
-            default:
-                title: "<%= dep %>⇒<%= arr %> <%= search_time %>"
-                summary: "<%= number %> <%= time %> <%= transfer %> <%= fee %>"
-                detail: "<%= number %> <%= time %> <%= transfer %> <%= fee %>\n<%= detail %>"
+            default: "<%= data[:dep] %>⇒<%= data[:arr] %> <%= data[:search_time] %>\n<% data[:summary].each do |s| %><%= Emoji::NUMBER[s[:number]] %> <%= s[:time] %> <%= s[:transfer] %> <%= s[:fee] %>\n<% end %><%data[:candidate].each do |c| %><%= Emoji::NUMBER[c[:number]] %> <%= c[:time] %> <%= c[:transfer] %> <%= c[:fee] %>\n<%= c[:detail] %>\n<% end %>"

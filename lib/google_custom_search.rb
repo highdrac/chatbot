@@ -1,10 +1,11 @@
 require 'yaml'
 require 'google/apis/customsearch_v1'
-require 'erb'
 
 class GoogleCustomSearch
 
-  def initialize(site: "", response_type: "default")
+  attr_reader :templates
+
+  def initialize
 
     config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
     config = config["lib"]["google_custom_search"]
@@ -13,8 +14,7 @@ class GoogleCustomSearch
     @search_engine_id = config["search_engine_id"]
     @site = ""
     @search_type = "text"
-    @response_type = response_type
-    @templates = config["templates"][@response_type]
+    @templates = config["templates"]
 
     @customsearch = Google::Apis::CustomsearchV1::CustomsearchService.new
     @customsearch.key = @api_key
@@ -23,14 +23,26 @@ class GoogleCustomSearch
 
   def search(keyword, site: @site, search_type: @search_type, random: false)
 
-    # パラメータにはtextが渡せないので渡すときだけ削除
-    st = (search_type == "text") ? nil : search_type
-    list = @customsearch.list_cses(keyword, cx: @search_engine_id, site_search: site, search_type: st)
-    index = random ? rand(10) : 0
-    data = list.items[index]
-    template = @templates[search_type]
+    response_data = ResponseData.new
 
-    return Response.new(text: ERB.new(template).result(binding))
+    begin
+      # パラメータにはtextが渡せないので渡すときだけ削除
+      st = (search_type == "text") ? nil : search_type
+      list = @customsearch.list_cses(keyword, cx: @search_engine_id, site_search: site, search_type: st)
+      index = random ? rand(10) : 0
+      result = list.items[index]
+      response_data.data = { title: result.title, link: result.link, search_type: search_type }
+      response_data.templates = @templates
+
+    rescue => e
+
+      puts e.message
+      puts e.backtrace.join("\n")
+      response_data.error_message = "エラーが発生しました。"
+
+    end
+
+    return response_data
 
   end
 

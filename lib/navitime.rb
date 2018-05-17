@@ -1,7 +1,6 @@
 require 'nokogiri'
 require 'uri'
 require 'open-uri'
-require 'erb'
 require 'yaml'
 require 'active_support'
 require 'active_support/core_ext'
@@ -23,60 +22,65 @@ class Navitime
   RESULT_SUMMARY_TRANSFER_XPATH = './/dd[contains(@class,"required_transfer")]/div[@class="text"]'
   RESULT_DETAIL_XPATH = '//input[@name="routeText"]'
 
-  def initialize(response_type: "default")
+  def initialize
 
     config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
     config = config["lib"]["navitime"]
-
-    @response_type = response_type
-    @templates = config["templates"][@response_type]
+    @templates = config["templates"]
 
   end
 
   def search(dep:, arr:, ymd:, hm:, basis:, candidate:)
 
-    ymd ||= Date.today.strftime("%Y%m%d")
-    ym = ymd[0..3] + "/" + ymd[4..5].sub(/^0/, "")
-    d = ymd[6..7]
-    hm ||= Time.now.strftime("%H%M")
-    h = hm[0..1]
-    m = hm[2..3]
-    basis ||= "発"
-    basis_hash = { "発" => 1, "着" => 0, "始発" => 4, "終電" => 3 }
-    candidate ||= 1
-    candidate = candidate.to_i
-    candidate = 1 if basis_hash[basis] > 1
-
-    query = { orvStationName: dep, dnvStationName: arr, month: ym, day: d, hour: h, minute: m, basis: basis_hash[basis] }
-    result_uri = URI(RESULT_URI)
-    result_uri.query = query.to_param
-    response = Response.new
-
     begin
 
+      ymd ||= Date.today.strftime("%Y%m%d")
+      ym = ymd[0..3] + "/" + ymd[4..5].sub(/^0/, "")
+      d = ymd[6..7]
+      hm ||= Time.now.strftime("%H%M")
+      h = hm[0..1]
+      m = hm[2..3]
+      basis ||= "発"
+      basis_hash = { "発" => 1, "着" => 0, "始発" => 4, "終電" => 3 }
+      candidate ||= 1
+      candidate = candidate.to_i
+      candidate = 1 if basis_hash[basis] > 1
+
+      query = { orvStationName: dep, dnvStationName: arr, month: ym, day: d, hour: h, minute: m, basis: basis_hash[basis] }
+      result_uri = URI(RESULT_URI)
+      result_uri.query = query.to_param
+      response_data = ResponseData.new
+      response_data.templates = @templates
+
       doc = Nokogiri::HTML(open(result_uri))
+      data = {}
 
       title = doc.xpath(RESULT_TITLE_XPATH).first.text.gsub(/[\s　]+/, " ").strip
       /出発\s(?<dep>.+)\s到着\s(?<arr>.+)/ =~ title
-      search_time = doc.xpath(RESULT_SEARCH_TIME_XPATH).first.text
-      response.text << ERB.new(@templates["title"]).result(binding) << "\n"
+      data[:dep], data[:arr] = dep, arr
+      data[:search_time] = doc.xpath(RESULT_SEARCH_TIME_XPATH).first.text
 
+      data[:summary] = []
       doc.xpath(RESULT_SUMMARY_XPATH).each_with_index do |node, i|
         break if i >= candidate
-        number = Emoji::NUMBER[i+1]
-        time = node.xpath(RESULT_SUMMARY_TIME_XPATH).first.text.gsub(/&nbsp;/, "")
-        fee = node.xpath(RESULT_SUMMARY_CASH_XPATH).first.text
-        fee << node.xpath(RESULT_SUMMARY_IC_XPATH).first.text if node.xpath(RESULT_SUMMARY_IC_XPATH)
-        transfer = node.xpath(RESULT_SUMMARY_TRANSFER_XPATH).first.text.gsub(/[\s　]/, "")
-        response.text << ERB.new(@templates["summary"]).result(binding) << "\n"
+        s = {}
+        s[:number] = i + 1
+        s[:time] = node.xpath(RESULT_SUMMARY_TIME_XPATH).first.text.gsub(/&nbsp;/, "")
+        s[:fee] = node.xpath(RESULT_SUMMARY_CASH_XPATH).first.text
+        s[:fee] << node.xpath(RESULT_SUMMARY_IC_XPATH).first.text if node.xpath(RESULT_SUMMARY_IC_XPATH)
+        s[:transfer] = node.xpath(RESULT_SUMMARY_TRANSFER_XPATH).first.text.gsub(/[\s　]/, "")
+        data[:summary].push s
       end
 
+      data[:candidate] = []
       doc.xpath(RESULT_DETAIL_XPATH).each_with_index do |node, i|
         break if i >= candidate
-        number = Emoji::NUMBER[i+1]
+        c = {}
+        c[:number] = i + 1
         text = node["value"]
         text.gsub!(/<br>/, "\n")
         /(?<transfer>.+?)\n(?<time>.+?)\n(?<fee>.+?)\n/ =~ text
+        c[:transfer], c[:time], c[:fee] = transfer, time, fee
         detail = ""
         text.scan(/(\d{2}:\d{2}発)　(\S+?)\n(.+?)\n(\d{2}:\d{2}着)　(\S+?)\n+/m).each_with_index do |line, j|
           if j == 0
@@ -87,17 +91,21 @@ class Navitime
           detail << "\n" << line[2].split("\n")[0] << "\n" << line[3] << " " << line[4]
         end
         detail << "\n"
-        response.text << ERB.new(@templates["detail"]).result(binding) << "\n"
+        c[:detail] = detail
+        data[:candidate].push c
       end
+
+      response_data.data = data
+      return response_data
 
     rescue => e
 
+      puts e.message
       puts e.backtrace.join("\n")
-      response.text << "エラーが発生しました。管理者にお知らせください。"
-      return response
+      response_data.error_message = "エラーが発生しました。管理者にお知らせください。"
+      return response_data
 
     end
-    return response
 
   end
 

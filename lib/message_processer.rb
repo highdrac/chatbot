@@ -1,5 +1,4 @@
-require File.expand_path(File.dirname(__FILE__)) + "/response.rb"
-require File.expand_path(File.dirname(__FILE__)) + "/emoji.rb"
+require File.expand_path(File.dirname(__FILE__)) + "/response_data.rb"
 
 require File.expand_path(File.dirname(__FILE__)) + "/google_custom_search.rb"
 require File.expand_path(File.dirname(__FILE__)) + "/tenki_jp.rb"
@@ -7,19 +6,16 @@ require File.expand_path(File.dirname(__FILE__)) + "/navitime.rb"
 
 class MessageProcesser
 
-  attr_reader :platform, :team, :response_type
-
-  def initialize(platform, team, response_type)
+  def initialize(platform:)
     @platform = platform
-    @team = team
-    @response_type = response_type
-    @gcs = GoogleCustomSearch.new({ response_type: @response_type })
-    @tj = TenkiJp.new({ response_type: @response_type })
-    @nt = Navitime.new({ response_type: @response_type })
+    @gcs = GoogleCustomSearch.new
+    @tj = TenkiJp.new
+    @nt = Navitime.new
   end
 
-  def get_response(text)
+  def get_response_data(channel:, text:, config:)
 
+    return ResponseData.new if !text
     # Reminder
     text.gsub!(/^Reminder: (.+)\.\n?/, '\1')
 
@@ -68,7 +64,7 @@ class MessageProcesser
       return @nt.search(dep: dep, arr: arr, ymd: ymd, hm: hm, basis: basis, candidate: candidate)
     end
 
-    return Response.new
+    return ResponseData.new
 
   end
 

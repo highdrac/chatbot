@@ -1,7 +1,6 @@
 require 'nokogiri'
 require 'uri'
 require 'open-uri'
-require 'erb'
 require 'yaml'
 
 
@@ -23,13 +22,12 @@ class TenkiJp
   RAIN_PROBABILITY_TERMS = 5
   RAIN_PROBABILITY_THRESHOLD = 30
 
-  def initialize(response_type: "default")
+  def initialize
 
     config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
     config = config["lib"]["tenki_jp"]
 
-    @response_type = response_type
-    @templates = config["templates"][@response_type]
+    @templates = config["templates"]
 
   end
 
@@ -38,7 +36,8 @@ class TenkiJp
     # エリアのURI特定のため、検索してエリアのURIを取得する
     search_uri = URI.escape(SEARCH_URI + "/?keyword=" + area)
     detail_uri = ""
-    response = Response.new
+    response_data = ResponseData.new
+    response_data.templates = @templates
 
     begin
 
@@ -48,9 +47,10 @@ class TenkiJp
 
     rescue => e
 
-      p e
-      response.text = "エラー：エリアが見つかりませんでした。"
-      return response
+      puts e.message
+      puts e.backtrace.join("\n")
+      response_data.error_message = "エラー：エリアが見つかりませんでした。"
+      return response_data
 
     end
 
@@ -64,38 +64,40 @@ class TenkiJp
         { label: "明日", xpath: DETAIL_TOMORROW_XPATH }
       ]
 
-      text = ""
-      rains = false
+      data = {}
+      data[:area_name] = area_name
+      data[:weather] = []
+      probability = []
       days.each do |day|
-
-        date = day[:label]
-        weather = doc.xpath(day[:xpath] + DETAIL_WEATHER_XPATH).first.text
-        hightemp = doc.xpath(day[:xpath] + DETAIL_HIGHTEMP_XPATH).first.text
-        hightempdiff = doc.xpath(day[:xpath] + DETAIL_HIGHTEMPDIFF_XPATH).first.text
-        lowtemp = doc.xpath(day[:xpath] + DETAIL_LOWTEMP_XPATH).text
-        lowtempdiff = doc.xpath(day[:xpath] + DETAIL_LOWTEMPDIFF_XPATH).first.text
-        rain_probability = []
+        weather = {}
+        weather[:date] = day[:label]
+        weather[:weather] = doc.xpath(day[:xpath] + DETAIL_WEATHER_XPATH).first.text
+        weather[:hightemp] = doc.xpath(day[:xpath] + DETAIL_HIGHTEMP_XPATH).first.text
+        weather[:hightempdiff] = doc.xpath(day[:xpath] + DETAIL_HIGHTEMPDIFF_XPATH).first.text
+        weather[:lowtemp] = doc.xpath(day[:xpath] + DETAIL_LOWTEMP_XPATH).text
+        weather[:lowtempdiff] = doc.xpath(day[:xpath] + DETAIL_LOWTEMPDIFF_XPATH).first.text
+        weather[:rain_probability] = []
         doc.xpath(day[:xpath] + DETAIL_RAIN_PROBABILITY_XPATH).each do |node|
-          rain_probability.push(node.text)
+          weather[:rain_probability].push(node.text)
+          probability.push(node.text)
         end
-        rains = rains?(rain_probability)
-        text << ERB.new(@templates["response"]).result(binding) << "\n"
+        data[:weather].push weather
       end
-      if rains
-        text = (@templates["rains"] << "\n") + text
-        response.notice = true
+      if data[:rains] = rains?(probability)
+        response_data.notice = true
       end
-      response.text = text
+      response_data.data = data
 
     rescue => e
 
-      p e
-      response.text = "エラー：指定エリア情報の取得に失敗しました。"
-      return response
+      puts e.message
+      puts e.backtrace.join("\n")
+      response_data.error_message = "エラー：指定エリア情報の取得に失敗しました。"
+      return response_data
 
     end
 
-    return response
+    return response_data
 
   end
 
