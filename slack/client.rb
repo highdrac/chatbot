@@ -45,6 +45,7 @@ class SlackClient
     end
     client.on :closed do |_data|
       puts "Client has disconnected successfully!"
+      client.start!
     end
     return client
   end
@@ -55,6 +56,11 @@ config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.ym
 config = config[PLATFORM]
 
 Parallel.each(config, in_process: config.length) do |_channel, config|
-  SlackClient.new(config)
+  begin
+    SlackClient.new(config)
+  rescue => e
+    puts e.backtrace
+    exit
+  end
 end
 

@@ -1,8 +1,9 @@
 require File.expand_path(File.dirname(__FILE__)) + "/response_data.rb"
 
-require File.expand_path(File.dirname(__FILE__)) + "/google_custom_search.rb"
-require File.expand_path(File.dirname(__FILE__)) + "/tenki_jp.rb"
-require File.expand_path(File.dirname(__FILE__)) + "/navitime.rb"
+require File.expand_path(File.dirname(__FILE__)) + "/handler/google_custom_search.rb"
+require File.expand_path(File.dirname(__FILE__)) + "/handler/tenki_jp.rb"
+require File.expand_path(File.dirname(__FILE__)) + "/handler/navitime.rb"
+require File.expand_path(File.dirname(__FILE__)) + "/handler/dice.rb"
 
 class MessageProcesser
 
@@ -11,6 +12,7 @@ class MessageProcesser
     @gcs = GoogleCustomSearch.new
     @tj = TenkiJp.new
     @nt = Navitime.new
+    @dice = Dice.new
   end
 
   def get_response_data(channel:, text:, config:)
@@ -62,6 +64,11 @@ class MessageProcesser
     # navitime
     elsif /^(route|乗換)(?<candidate>\d)?[\s　]+?(?<dep>[^\s　]+?)([\s　]+|から)(?<arr>[^\s　]+?)([\s　]+?(?<ymd>\d{8}))?([\s　]+?(?<hm>\d{4})?(?<basis>発|着|始発|終電)?)?$/ =~ text
       return @nt.search(dep: dep, arr: arr, ymd: ymd, hm: hm, basis: basis, candidate: candidate)
+
+    # dice
+    elsif /\[\d+[Dd]\d+([+-]\d+)?.*?\]/ =~ text
+      return @dice.role(text)
+
     end
 
     return ResponseData.new

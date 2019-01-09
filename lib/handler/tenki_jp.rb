@@ -24,7 +24,7 @@ class TenkiJp
 
   def initialize
 
-    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
+    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../../config.yml"))
     config = config["lib"]["tenki_jp"]
 
     @templates = config["templates"]

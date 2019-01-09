@@ -7,7 +7,7 @@ class GoogleCustomSearch
 
   def initialize
 
-    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
+    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../../config.yml"))
     config = config["lib"]["google_custom_search"]
 
     @api_key = config["api_key"]
