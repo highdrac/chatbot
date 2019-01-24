@@ -30,4 +30,10 @@ lib:
     dice:
         templates:
             defalut: "<%= data[:text] %>"
+    omikuji:
+        templates:
+            default:
+                - "大吉"
+                - "小吉"
+                - "凶"
 

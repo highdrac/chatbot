@@ -12,7 +12,12 @@ class MessageFormatter
     begin
       data = response_data.data
       template = response_data.templates[response_type]
+      p template
+      if template.instance_of?(Array)
+        template = template[rand(template.size)]
+      end
       return ERB.new(template).result(binding)
+
     rescue => e
       puts e.message
       puts e.stacktrace.join("\n")

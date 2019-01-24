@@ -4,6 +4,7 @@ require File.expand_path(File.dirname(__FILE__)) + "/handler/google_custom_searc
 require File.expand_path(File.dirname(__FILE__)) + "/handler/tenki_jp.rb"
 require File.expand_path(File.dirname(__FILE__)) + "/handler/navitime.rb"
 require File.expand_path(File.dirname(__FILE__)) + "/handler/dice.rb"
+require File.expand_path(File.dirname(__FILE__)) + "/handler/omikuji.rb"
 
 class MessageProcesser
 
@@ -13,6 +14,7 @@ class MessageProcesser
     @tj = TenkiJp.new
     @nt = Navitime.new
     @dice = Dice.new
+    @omikuji = Omikuji.new
   end
 
   def get_response_data(channel:, text:, config:)
@@ -65,10 +67,13 @@ class MessageProcesser
     elsif /^(route|乗換)(?<candidate>\d)?[\s　]+?(?<dep>[^\s　]+?)([\s　]+|から)(?<arr>[^\s　]+?)([\s　]+?(?<ymd>\d{8}))?([\s　]+?(?<hm>\d{4})?(?<basis>発|着|始発|終電)?)?$/ =~ text
       return @nt.search(dep: dep, arr: arr, ymd: ymd, hm: hm, basis: basis, candidate: candidate)
 
+    # omikuji
+    elsif /^omikuji.*$/ =~ text
+      return @omikuji.draw
+
     # dice
     elsif /\[\d+[Dd]\d+([+-]\d+)?.*?\]/ =~ text
       return @dice.role(text)
-
     end
 
     return ResponseData.new
