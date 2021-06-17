@@ -12,7 +12,6 @@ class MessageFormatter
     begin
       data = response_data.data
       template = response_data.templates[response_type]
-      p template
       if template.instance_of?(Array)
         template = template[rand(template.size)]
       end
@@ -25,3 +24,4 @@ class MessageFormatter
     end
   end
 end
+
