@@ -68,8 +68,8 @@ class MessageProcesser
       return @nt.search(dep: dep, arr: arr, ymd: ymd, hm: hm, basis: basis, candidate: candidate)
 
     # omikuji
-    elsif /^omikuji.*$/ =~ text
-      return @omikuji.draw
+    elsif /^omikuji[\s　]+?(?<type>.+)$/ =~ text
+      return @omikuji.draw(type)
 
     # dice
     elsif /\[\d+[Dd]\d+([+-]\d+)?.*?\]/ =~ text

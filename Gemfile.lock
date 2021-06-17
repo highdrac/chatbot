@@ -24,6 +24,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     event_emitter (0.2.6)
     eventmachine (1.2.7)
+    eventmachine (1.2.7-x64-mingw32)
     faraday (1.4.2)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
@@ -43,6 +44,7 @@ GEM
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.5.1)
     ffi (1.15.3)
+    ffi (1.15.3-x64-mingw32)
     gems (1.2.0)
     gli (2.20.0)
     google-api-client (0.53.0)
@@ -90,6 +92,8 @@ GEM
     multi_json (1.15.0)
     multipart-post (2.1.1)
     netrc (0.11.0)
+    nokogiri (1.11.7-x64-mingw32)
+      racc (~> 1.4)
     nokogiri (1.11.7-x86_64-linux)
       racc (~> 1.4)
     opus-ruby (1.0.1)
@@ -104,6 +108,12 @@ GEM
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
     rest-client (2.1.0)
+      http-accept (>= 1.7.0, < 2.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
+    rest-client (2.1.0-x64-mingw32)
+      ffi (~> 1.9)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -143,6 +153,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.7)
+    unf_ext (0.0.7.7-x64-mingw32)
     webrick (1.7.0)
     websocket (1.2.9)
     websocket-client-simple (0.3.0)
@@ -154,6 +165,7 @@ GEM
     zeitwerk (2.4.2)
 
 PLATFORMS
+  x64-mingw32
   x86_64-linux
 
 DEPENDENCIES

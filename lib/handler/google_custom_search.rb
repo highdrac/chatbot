@@ -16,7 +16,7 @@ class GoogleCustomSearch
     @search_type = "text"
     @templates = config["templates"]
 
-    @customsearch = Google::Apis::CustomsearchV1::CustomsearchService.new
+    @customsearch = Google::Apis::CustomsearchV1::CustomSearchAPIService.new
     @customsearch.key = @api_key
 
   end
