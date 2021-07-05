@@ -10,6 +10,7 @@ gem 'faye-websocket'
 gem 'redis'
 gem 'parallel'
 gem 'discordrb'
+gem 'async-websocket', '~>0.8.0'
 
 gem 'rspec'
 
