@@ -19,7 +19,7 @@ class MessageFormatter
 
     rescue => e
       puts e.message
-      puts e.stacktrace.join("\n")
+      puts e.backtrace.join("\n")
       return "テンプレートエラーが発生しました。"
     end
   end

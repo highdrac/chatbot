@@ -29,7 +29,7 @@ lib:
             default: "<%= data[:dep] %>⇒<%= data[:arr] %> <%= data[:search_time] %>\n<% data[:summary].each do |s| %><%= Emoji::NUMBER[s[:number]] %> <%= s[:time] %> <%= s[:transfer] %> <%= s[:fee] %>\n<% end %><%data[:candidate].each do |c| %><%= Emoji::NUMBER[c[:number]] %> <%= c[:time] %> <%= c[:transfer] %> <%= c[:fee] %>\n<%= c[:detail] %>\n<% end %>"
     dice:
         templates:
-            defalut: "<%= data[:text] %>"
+            default: "<%= data[:text] %>"
     omikuji:
         g1:
             templates:

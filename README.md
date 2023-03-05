@@ -5,11 +5,12 @@ SlackとDiscordに対応。
 
 ## 動作環境
 
-Ruby 2.5  
+Ruby 3.1
   
-Discord側はlibsodium-devを入れておく。  
+Discord側はlibsodium-develを入れておく。  
 
-## デプロイ(未検証)
+
+## デプロイ
 
 ```
 $ git clone git@github.com:highdrac/chatbot.git
@@ -20,7 +21,7 @@ $ nohup bundle exec ruby ./discord/client.rb &
 
 ## help
 
-()内は省略可
+()内は省略可  
 
 ### Google Custom Search
 
@@ -55,10 +56,9 @@ mhw KEYWORD: Google検索(対象サイト: mhwg.org)
 
 ## omikuji
 
-設定ファイルに書いた結果リストのうち1つを返す。
+設定ファイルに書いた結果リストのうち1つを返す。  
 
 ## ToDo
 
 Slack側が安定しないので対策→対策はしたので様子を見る  
 スプレッドシート読み書き系の何か  
-

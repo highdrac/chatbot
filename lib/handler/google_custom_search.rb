@@ -1,4 +1,5 @@
 require 'yaml'
+require 'rexml/document'
 require 'google/apis/customsearch_v1'
 
 class GoogleCustomSearch
@@ -28,7 +29,8 @@ class GoogleCustomSearch
     begin
       # パラメータにはtextが渡せないので渡すときだけ削除
       st = (search_type == "text") ? nil : search_type
-      list = @customsearch.list_cses(keyword, cx: @search_engine_id, site_search: site, search_type: st)
+      p @customsearch
+      list = @customsearch.list_cses(q: keyword, cx: @search_engine_id, site_search: site, search_type: st)
       index = random ? rand(10) : 0
       result = list.items[index]
       response_data.data = { title: result.title, link: result.link, search_type: search_type }

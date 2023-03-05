@@ -14,6 +14,6 @@ gem 'async-websocket', '~>0.8.0'
 
 gem 'rspec'
 
-gem 'google-api-client'
+gem 'google-apis-customsearch_v1'
 gem 'nokogiri'
 gem 'activesupport'
