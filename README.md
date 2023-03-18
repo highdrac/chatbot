@@ -26,12 +26,13 @@ $ nohup bundle exec ruby ./discord/client.rb &
 ## ChatGPT
 
 現在のところ3.5-turbo。  
-gpt QUERY: 質問をChatGPTに投げる。同一トークIDの過去のやりとりを引き継ぐ
-gpt list: 現在のチャンネルで有効なトークIDの一覧を返す
-gpt detail X: トークID:Xのやりとりの履歴を確認する
-gpt id X: トークIDをXに切り替える
-gpt delete X: トークID:Xの履歴を削除する
-gpt clear: 現在のチャンネルで有効なトーク履歴を全て削除する
+gpt QUERY: 質問をChatGPTに投げる。同一トークIDの過去のやりとりを引き継ぐ  
+gpt list: 現在のチャンネルで有効なトークIDの一覧を返す  
+gpt detail X: トークID:Xのやりとりの履歴を確認する  
+gpt id X: トークIDをXに切り替える  
+gpt system QUERY: 現在のトークIDのアシスタントを設定する。複数は上書きになるので注意  
+gpt delete X: トークID:Xの履歴を削除する  
+gpt clear: 現在のチャンネルで有効なトーク履歴を全て削除する  
 
 ### Google Custom Search
 

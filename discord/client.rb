@@ -29,7 +29,6 @@ class DiscordClient
         response_type = @config[channel_id]["response_type"]
         response = @formatter.get_response(response_data: response_data, response_type: response_type)
         unless response.empty?
-          p response[0..(MESSAGE_MAX_LENGTH - 1)]
           event.respond response[0...MESSAGE_MAX_LENGTH]
           response = response[MESSAGE_MAX_LENGTH..-1]
         end

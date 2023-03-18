@@ -26,22 +26,25 @@ class MessageProcesser
     if /^gpt[\s　]+?list$/ =~ text
       return @gpt.list(channel)
     # ChatGPT detail
-    elsif /^gpt[\s　]+?detail[\s　]+?(?<id>[\d]+)$/ =~ text
+    elsif /^gpt[\s　]+?detail[\s　]+?(?<id>\d+)$/ =~ text
       return @gpt.detail(id, channel)
     # ChatGPT set current id
-    elsif /^gpt[\s　]+?id[\s　]+?(?<id>[\d]+)$/ =~ text
+    elsif /^gpt[\s　]+?id[\s　]+?(?<id>\d+)$/ =~ text
       return @gpt.set_talk_id(id, channel)
     # ChatGPT delete
-    elsif /^gpt[\s　]+?delete[\s　]+?(?<id>[\d]+)$/ =~ text
+    elsif /^gpt[\s　]+?delete[\s　]+?(?<id>\d+)$/ =~ text
       return @gpt.delete(id, channel)
     # ChatGPT clear
     elsif /^gpt[\s　]+?clear$/ =~ text
       return @gpt.clear(channel)
+    # ChatGPT system
+    elsif /^gpt[\s　]+?system[\s　]+?(?<message>[\s\S]+)$/ =~ text
+      return @gpt.system(message, channel)
     # ChatGPT
     elsif /^gpt[\s　]+?(?<message>.+)$/ =~ text
       return @gpt.chat(message, channel)
     # Google Search
-    elsif /^g(oogle)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text
+    elsif /^g(oogle)?(?<r>r)?[\s　]+?(?<keyword>[\s\S]+)$/ =~ text
       return @gcs.search(keyword, random: !r.nil?)
     # Google Search (image)
     elsif /^i(mage)?(?<r>r)?[\s　]+?(?<keyword>.+)$/ =~ text

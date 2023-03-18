@@ -22,11 +22,29 @@ class ChatGPT
       model: "gpt-3.5-turbo",
       messages: messages,
     }
-    response = @client.chat(parameters: params)
-    response = response.dig("choices", 0, "message", "content")
-    messages.push({role: "assistant", content: response})
+    begin
+      response = @client.chat(parameters: params)
+      response = response.dig("choices", 0, "message", "content")
+      messages.push({role: "assistant", content: response})
+      save_history(@talk_id[channel], messages)
+      return get_response_data(response)
+    rescue => e
+      puts e.message
+      puts e.backtrace.join("\n")
+      response_data.error_message = "エラーが発生しました。:" + e.message
+    end
+  end
+
+  def system(message, channel)
+    @redis = get_redis_client(channel)
+    messages = load_history(@talk_id[channel])
+    if messages.empty? || messages[0]["role"] != "system"
+      messages.unshift({role: "system", content: message})
+    else
+      messages[0] = {role: "system", content: message}
+    end
     save_history(@talk_id[channel], messages)
-    return get_response_data(response)
+    return get_response_data("set system: " + @talk_id[channel].to_s)
   end
 
   def list(channel)
