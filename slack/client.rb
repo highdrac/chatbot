@@ -10,8 +10,8 @@ PLATFORM = Platform::SLACK
 
 class SlackClient
 
-  def initialize(config)
-    @processer = MessageProcesser.new(platform: PLATFORM)
+  def initialize(platform_config, lib_config)
+    @processer = MessageProcesser.new(platform: PLATFORM, config: lib_config)
     @formatter = MessageFormatter.new(platform: PLATFORM)
     @config = config
     @response_type = @config["response_type"]
@@ -28,7 +28,7 @@ class SlackClient
       puts "Successfully connected, welcome '#{client.self.name}' to the '#{client.team.name}'"
     end
     client.on :message do |data|
-      response_data = @processer.get_response_data(channel: data.channel, text: data.text, config: @config)
+      response_data = @processer.get_response_data(channel: data.channel, text: data.text)
       if response_data.error_message
         client.message channel: data.channel, text: response_data.error_message
       elsif response_data.data
@@ -53,11 +53,12 @@ class SlackClient
 end
 
 config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../config.yml"))
-config = config[PLATFORM]
+platform_config = config[PLATFORM]
+lib_config = config["lib"]
 
-Parallel.each(config, in_process: config.length) do |_channel, config|
+Parallel.each(platform_config, in_process: platform_config.length) do |_channel, platform_config|
   begin
-    SlackClient.new(config)
+    SlackClient.new(platform_config, lib_config)
   rescue => e
     puts e.backtrace
     exit

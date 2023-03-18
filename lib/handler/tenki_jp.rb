@@ -1,11 +1,8 @@
 require 'nokogiri'
 require 'uri'
 require 'open-uri'
-require 'yaml'
-
 
 class TenkiJp
-
   SITE = "https://tenki.jp"
   SEARCH_URI = SITE + "/search"
   SEARCH_DETAIL_URL_XPATH = '//p[@class="search-entry-data"][1]/a'
@@ -18,52 +15,39 @@ class TenkiJp
   DETAIL_LOWTEMP_XPATH = '//dd[@class="low-temp temp"]'
   DETAIL_LOWTEMPDIFF_XPATH = '//dd[@class="low-temp tempdiff"]'
   DETAIL_RAIN_PROBABILITY_XPATH = '//tr[@class="rain-probability"]/td'
-
   RAIN_PROBABILITY_TERMS = 5
   RAIN_PROBABILITY_THRESHOLD = 30
 
-  def initialize
-
-    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../../config.yml"))
-    config = config["lib"]["tenki_jp"]
-
+  def initialize(config)
+    config = config["tenki_jp"]
     @templates = config["templates"]
-
   end
 
   def search(area: "東京都")
-
     # エリアのURI特定のため、検索してエリアのURIを取得する
-    search_uri = URI.escape(SEARCH_URI + "/?keyword=" + area)
+    search_uri = SEARCH_URI + "/?" + URI.encode_www_form(keyword: area)
     detail_uri = ""
     response_data = ResponseData.new
     response_data.templates = @templates
-
     begin
-
-      doc = Nokogiri::HTML(open(search_uri))
+      doc = Nokogiri::HTML(Net::HTTP.get(URI(search_uri)))
       nodes = doc.xpath(SEARCH_DETAIL_URL_XPATH)
-      detail_uri = URI.escape(SITE + nodes.first["href"])
-
+      detail_uri = SITE + nodes.first["href"]
     rescue => e
-
       puts e.message
       puts e.backtrace.join("\n")
       response_data.error_message = "エラー：エリアが見つかりませんでした。"
       return response_data
-
     end
-
     begin
-
-      doc = Nokogiri::HTML(open(detail_uri))
+      p detail_uri
+      doc = Nokogiri::HTML(Net::HTTP.get(URI(detail_uri)))
       title = doc.xpath(DETAIL_TITLE_XPATH).first.text
       area_name ||= area_name = $1 if title.match(/^(.+)の天気/)
       days = [
         { label: "今日", xpath: DETAIL_TODAY_XPATH },
         { label: "明日", xpath: DETAIL_TOMORROW_XPATH }
       ]
-
       data = {}
       data[:area_name] = area_name
       data[:weather] = []
@@ -87,22 +71,16 @@ class TenkiJp
         response_data.notice = true
       end
       response_data.data = data
-
     rescue => e
-
       puts e.message
       puts e.backtrace.join("\n")
       response_data.error_message = "エラー：指定エリア情報の取得に失敗しました。"
       return response_data
-
     end
-
     return response_data
-
   end
 
   def rains?(probability)
-
     # 24-30h分を通知対象にカウントする
     cnt = 0
     probability.each do |prob|
@@ -111,8 +89,5 @@ class TenkiJp
       return true if prob.to_i >= RAIN_PROBABILITY_THRESHOLD
     end
     return false
-
   end
-
 end
-

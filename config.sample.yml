@@ -64,3 +64,7 @@ lib:
                     - "天皇賞春"
                     - "ヴィクトリアマイル"
                     - "帝王賞"
+    chatgpt:
+        openai_api_key: API_KEY
+        templates:
+            default: "<%= data[:text] %>"

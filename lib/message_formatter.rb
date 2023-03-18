@@ -3,7 +3,6 @@ require 'erb'
 require File.expand_path(File.dirname(__FILE__)) + "/emoji.rb"
 
 class MessageFormatter
-
   def initialize(platform:)
     @platform = platform
   end
@@ -16,7 +15,6 @@ class MessageFormatter
         template = template[rand(template.size)]
       end
       return ERB.new(template).result(binding)
-
     rescue => e
       puts e.message
       puts e.backtrace.join("\n")
@@ -24,4 +22,3 @@ class MessageFormatter
     end
   end
 end
-

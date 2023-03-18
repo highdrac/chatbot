@@ -3,13 +3,8 @@ class Dice
   MAX_NUM = 100
   MAX_SURFACES = 10000
 
-  def initialize
-
-    config = YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/../../config.yml"))
-    config = config["lib"]["dice"]
-
-    @templates = config["templates"]
-
+  def initialize(config)
+    @templates = config["dice"]["templates"]
   end
 
   def role(text)
@@ -22,11 +17,9 @@ class Dice
       hash[:correction] = correction
       matches.push(hash)
     end
-
     response_data = ResponseData.new
     response_data.templates = @templates
     data = {}
-
     begin
       matches.each do |hash|
         sum = 0
@@ -49,19 +42,15 @@ class Dice
         result = sum.to_s
         text.sub!(Regexp.new(Regexp.escape(hash[:whole])), result)
       end
-
       data[:text] = text
       response_data.data = data
       return response_data
-
     rescue => e
       puts e.message
       puts e.backtrace.join("\n")
       response_data.error_message = "エラーが発生しました。管理者にお知らせください。"
       return response_data
     end
-
   end
-
 end
 
