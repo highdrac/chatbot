@@ -23,6 +23,16 @@ $ nohup bundle exec ruby ./discord/client.rb &
 
 ()内は省略可  
 
+## ChatGPT
+
+現在のところ3.5-turbo。  
+gpt QUERY: 質問をChatGPTに投げる。同一トークIDの過去のやりとりを引き継ぐ
+gpt list: 現在のチャンネルで有効なトークIDの一覧を返す
+gpt detail X: トークID:Xのやりとりの履歴を確認する
+gpt id X: トークIDをXに切り替える
+gpt delete X: トークID:Xの履歴を削除する
+gpt clear: 現在のチャンネルで有効なトーク履歴を全て削除する
+
 ### Google Custom Search
 
 g(oogle)(r) KEYWORD: Google検索(r: ランダム、デフォルトはoff)  
@@ -60,5 +70,4 @@ mhw KEYWORD: Google検索(対象サイト: mhwg.org)
 
 ## ToDo
 
-Slack側が安定しないので対策→対策はしたので様子を見る  
 スプレッドシート読み書き系の何か  
